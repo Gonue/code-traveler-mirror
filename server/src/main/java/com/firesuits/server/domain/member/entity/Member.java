@@ -10,6 +10,7 @@ import com.firesuits.server.domain.learn.entity.LearnCheck;
 import com.firesuits.server.domain.quiz.entity.Quiz;
 import com.firesuits.server.domain.quiz.entity.QuizResult;
 import com.firesuits.server.global.audit.AuditingFields;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,29 +19,38 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
+@Table(name = "member")
 @Entity
 public class Member extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", updatable = false)
     private Long memberId;
+    @Column(name = "email", nullable = false, unique = true, updatable = false, length = 50)
     private String email;
+    @Column(name = "nick_name", nullable = false)
     private String nickName;
+    @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "experience")
     private int experience;
+    @Column(name = "level")
     private int level;
+    @Column(name = "required_experience")
     private int requiredExperience;
+    @Column(name = "profile_image")
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "member_mbti", nullable = false)
     private MemberMbti memberMbti;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "member_theme", nullable = false)
     private MemberTheme memberTheme;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -64,11 +74,9 @@ public class Member extends AuditingFields {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Content> contents = new ArrayList<>();
 
-    // learn 매핑 위해서 임의로 작성
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Learn> learns = new ArrayList<>();
 
-    // quiz 테이블 생성을 위해서 임의로 작성
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Quiz> quizzes = new ArrayList<>();
 
@@ -76,7 +84,7 @@ public class Member extends AuditingFields {
     private List<QuizResult> quizResults = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<LearnCheck> learnChecks  = new ArrayList<>();
+    private List<LearnCheck> learnChecks = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ContentProgress> contentProgresses = new ArrayList<>();
