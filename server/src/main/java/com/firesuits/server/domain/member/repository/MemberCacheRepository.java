@@ -30,6 +30,18 @@ public class MemberCacheRepository {
         return Optional.ofNullable(memberDto);
     }
 
+    public void updateMember(MemberDto memberDto) {
+        String key = getKey(memberDto.getEmail());
+        log.info("Update Member in Redis {} : {} ", key, memberDto);
+        memberDtoRedisTemplate.opsForValue().set(key, memberDto, MEMBER_CACHE_TTL);
+    }
+
+    public void deleteMember(String email) {
+        String key = getKey(email);
+        log.info("Delete Member from Redis: {}", key);
+        memberDtoRedisTemplate.delete(key);
+    }
+
     private String getKey(String email){
         return "MEMBER:" + email;
     }

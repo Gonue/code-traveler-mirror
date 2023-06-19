@@ -14,6 +14,7 @@ import com.firesuits.server.domain.member.repository.MemberRepository;
 import com.firesuits.server.global.auth.utils.CustomAuthorityUtils;
 import com.firesuits.server.global.error.exception.BusinessLogicException;
 import com.firesuits.server.global.error.exception.ExceptionCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Transactional
+@RequiredArgsConstructor
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -37,14 +38,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils customAuthorityUtils;
     private final ArticleRepository articleRepository;
-
-    public MemberService(MemberRepository memberRepository, ArticleCommentRepository articleCommentRepository, PasswordEncoder passwordEncoder, CustomAuthorityUtils customAuthorityUtils, ArticleRepository articleRepository) {
-        this.memberRepository = memberRepository;
-        this.articleCommentRepository = articleCommentRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.customAuthorityUtils = customAuthorityUtils;
-        this.articleRepository = articleRepository;
-    }
+    private final MemberCacheService memberCacheService;
 
     //회원가입
     public MemberDto join(String email, String password, String checkPassword, String name, MemberMbti memberMbti){
@@ -69,14 +63,14 @@ public class MemberService {
     public MemberDto updateProfileImage(String email, String profileImage){
         Member member = memberOrException(email);
         member.setProfileImage(profileImage);
-        return MemberDto.from(memberRepository.save(member));
+        return updateMemberAndCache(member);
     }
 
     //닉네임 변경
     public MemberDto updateNickName(String email, String nickName){
         Member member = memberOrException(email);
         member.setNickName(nickName);
-        return MemberDto.from(memberRepository.save(member));
+        return updateMemberAndCache(member);
     }
 
     //프로필 이미지, 닉네임 동시
@@ -88,7 +82,7 @@ public class MemberService {
         if (nickName.isPresent() && !nickName.get().isEmpty()) {
             member.setNickName(nickName.get());
         }
-        return MemberDto.from(memberRepository.save(member));
+        return updateMemberAndCache(member);
     }
 
     //Mbti 수정
@@ -99,7 +93,7 @@ public class MemberService {
         }
         member.setMemberMbti(memberMbti);
         memberRepository.save(member);
-        return MemberDto.from(memberRepository.save(member));
+        return updateMemberAndCache(member);
     }
 
     //테마 수정
@@ -108,6 +102,7 @@ public class MemberService {
         member.setMemberTheme(memberTheme);
         memberRepository.save(member);
         MemberDto.from(memberRepository.save(member));
+        updateMemberAndCache(member);
     }
 
     //비밀번호 수정
@@ -123,6 +118,7 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(newPassword));
         memberRepository.save(member);
         MemberDto.from(member);
+        updateMemberAndCache(member);
     }
 
     @Transactional
@@ -136,6 +132,7 @@ public class MemberService {
             articleRepository.save(article);
         }
         memberRepository.delete(member);
+        memberCacheService.deleteMember(email);
     }
 
     //내가 작성한 토론 댓글
@@ -157,7 +154,7 @@ public class MemberService {
     //멤버 정보
     public MemberDto getMemberInfo(String email){
         Member member = memberOrException(email);
-        return MemberDto.from(member);
+        return updateMemberAndCache(member);
     }
 
     //출석체크
@@ -179,6 +176,7 @@ public class MemberService {
         member.getAttendances().add(attendance);
         member.addExperience(20);
         memberRepository.save(member);
+        updateMemberAndCache(member);
     }
 
     //출석체크한 날짜
@@ -235,5 +233,11 @@ public class MemberService {
     private void setRoles(Member member, String email){
         List<String> roles = customAuthorityUtils.createRoles(email);
         member.setRoles(roles);
+    }
+
+    private MemberDto updateMemberAndCache(Member member) {
+        MemberDto memberDto = MemberDto.from(memberRepository.save(member));
+        memberCacheService.updateMember(memberDto);
+        return memberDto;
     }
 }
