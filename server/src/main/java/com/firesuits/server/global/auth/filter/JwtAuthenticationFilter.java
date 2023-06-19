@@ -1,9 +1,10 @@
 package com.firesuits.server.global.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firesuits.server.domain.member.entity.Member;
+import com.firesuits.server.domain.member.dto.MemberDto;
 import com.firesuits.server.global.auth.dto.LoginDto;
 import com.firesuits.server.global.auth.jwt.JwtTokenizer;
+import com.firesuits.server.global.auth.userservice.MemberDetailsService;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,10 +48,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws ServletException, IOException {
-        Member member = (Member) authResult.getPrincipal();
+        MemberDetailsService.MemberDetails memberDetails = (MemberDetailsService.MemberDetails) authResult.getPrincipal();
+        MemberDto memberDto = memberDetails.getMemberDto();
 
-        String accessToken = delegateAccessToken(member);
-        String refreshToken = delegateRefreshToken(member);
+
+        String accessToken = delegateAccessToken(memberDto);
+        String refreshToken = delegateRefreshToken(memberDto);
 
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("Refresh", refreshToken);
@@ -59,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     // Access Token
-    private String delegateAccessToken(Member member) {
+    private String delegateAccessToken(MemberDto member) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", member.getEmail());
         claims.put("roles", member.getRoles());
@@ -75,7 +78,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     // Refresh Token
-    private String delegateRefreshToken(Member member) {
+    private String delegateRefreshToken(MemberDto member) {
         String subject = member.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());

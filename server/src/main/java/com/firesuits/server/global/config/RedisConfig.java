@@ -2,7 +2,7 @@ package com.firesuits.server.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.firesuits.server.domain.member.entity.Member;
+import com.firesuits.server.domain.member.dto.MemberDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,14 +36,17 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Member>
-    memberDtoRedisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<String, Member> redisTemplate = new RedisTemplate<>();
-
-
+    public RedisTemplate<String, MemberDto> memberDtoRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, MemberDto> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<Member>(Member.class));
+
+        Jackson2JsonRedisSerializer<MemberDto> serializer = new Jackson2JsonRedisSerializer<>(MemberDto.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        serializer.setObjectMapper(objectMapper);
+
+        redisTemplate.setValueSerializer(serializer);
 
         return redisTemplate;
     }

@@ -21,7 +21,7 @@ public class MemberJoinResponse {
                 dto.getEmail(),
                 dto.getNickName(),
                 dto.getProfileImage(),
-                dto.getCreateAt()
+                dto.getCreatedAt()
         );
     }
 }

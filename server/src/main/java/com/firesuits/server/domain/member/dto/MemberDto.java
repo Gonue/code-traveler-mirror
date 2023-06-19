@@ -5,10 +5,13 @@ import com.firesuits.server.domain.member.entity.MemberMbti;
 import com.firesuits.server.domain.member.entity.MemberTheme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class MemberDto {
     private Long memberId;
@@ -21,7 +24,8 @@ public class MemberDto {
     private String profileImage;
     private MemberMbti memberMbti;
     private MemberTheme memberTheme;
-    private LocalDateTime createAt;
+    private List<String> roles;
+    private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
 
@@ -37,6 +41,7 @@ public class MemberDto {
                 entity.getProfileImage(),
                 entity.getMemberMbti(),
                 entity.getMemberTheme(),
+                entity.getRoles(),
                 entity.getCreatedAt(),
                 entity.getModifiedAt()
         );

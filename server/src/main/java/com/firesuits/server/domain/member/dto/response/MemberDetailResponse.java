@@ -33,7 +33,7 @@ public class MemberDetailResponse {
                 dto.getLevel(),
                 dto.getExperience(),
                 dto.getRequiredExperience(),
-                dto.getCreateAt()
+                dto.getCreatedAt()
         );
     }
 }

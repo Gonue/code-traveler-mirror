@@ -1,6 +1,6 @@
 package com.firesuits.server.domain.member.repository;
 
-import com.firesuits.server.domain.member.entity.Member;
+import com.firesuits.server.domain.member.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,20 +14,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberCacheRepository {
 
-    private final RedisTemplate<String, Member> memberDtoRedisTemplate;
+    private final RedisTemplate<String, MemberDto> memberDtoRedisTemplate;
     private final static Duration MEMBER_CACHE_TTL = Duration.ofDays(2);
 
-    public void setMember(Member member){
-        String key = getKey(member.getEmail());
-        log.info("Set Member to Redis {} : {} ", key, member);
-        memberDtoRedisTemplate.opsForValue().set(key, member, MEMBER_CACHE_TTL);
+    public void setMember(MemberDto memberDto){
+        String key = getKey(memberDto.getEmail());
+        log.info("Set Member to Redis {} : {} ", key, memberDto);
+        memberDtoRedisTemplate.opsForValue().set(key, memberDto, MEMBER_CACHE_TTL);
     }
 
-    public Optional<Member> getMember(String email){
+    public Optional<MemberDto> getMember(String email){
         String key = getKey(email);
-        Member member = memberDtoRedisTemplate.opsForValue().get(key);
-        log.info("Get Member to Redis {} : {} ", key, member);
-        return Optional.ofNullable(member);
+        MemberDto memberDto = memberDtoRedisTemplate.opsForValue().get(key);
+        log.info("Get Member to Redis {} : {} ", key, memberDto);
+        return Optional.ofNullable(memberDto);
     }
 
     private String getKey(String email){
