@@ -8,13 +8,18 @@ spring:
     url: ${AWS_RDS_URL}
     username: ${AWS_RDS_USERNAME}
     password: ${AWS_RDS_PASSWORD}
+
+  redis:
+    host: ${REDIS.HOST}
+    port: 6379
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
     log-request-details: true
   jpa:
     defer-datasource-initialization: true
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     open-in-view: false
     show-sql: true
     properties:
