@@ -9,11 +9,13 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@Table(name = "comment_like")
 @Entity
 public class CommentLike extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_like_id", updatable = false)
     private Long CommentLikeId;
 
     @ManyToOne
@@ -24,6 +26,7 @@ public class CommentLike extends AuditingFields {
     @JoinColumn(name = "article_comment_id")
     private ArticleComment articleComment;
 
+    @Column(name = "value")
     private int value;
 
     public static CommentLike of(Member member, ArticleComment articleComment, int value){

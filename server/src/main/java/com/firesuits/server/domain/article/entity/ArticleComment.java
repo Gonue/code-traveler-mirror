@@ -11,10 +11,12 @@ import java.util.List;
 
 @Getter
 @Setter
+@Table(name = "article_comment")
 @Entity
 public class ArticleComment extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "article_comment_id", updatable = false)
     private Long articleCommentId;
 
     @Column(columnDefinition = "TEXT", length = 5000)
