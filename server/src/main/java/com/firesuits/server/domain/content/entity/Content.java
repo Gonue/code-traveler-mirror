@@ -16,14 +16,18 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "content")
 @Entity
 public class Content extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "content_id", updatable = false)
     private Long contentId;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "content_img")
     private String contentImg;
 
     @ManyToOne

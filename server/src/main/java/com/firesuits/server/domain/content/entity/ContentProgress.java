@@ -14,13 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "content_progress")
 @Entity
 public class ContentProgress extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "content_progress_id", updatable = false)
     private Long contentProgressId;
 
+    @Column(name = "progress")
     private double progress;
 
     @ManyToOne
