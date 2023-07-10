@@ -11,12 +11,16 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
+@Table(name = "learn_check")
+@Entity
 public class LearnCheck extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "learn_check_id", updatable = false)
     private Long learnCheckId;
+
+    @Column(name = "completed")
     private Boolean completed;
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -25,7 +29,7 @@ public class LearnCheck extends AuditingFields {
     @JoinColumn(name = "learn_id")
     private Learn learn;
     @ManyToOne
-    @JoinColumn(name = "contentProgress_id")
+    @JoinColumn(name = "content_progress_id")
     private ContentProgress contentProgress;
 
     public static LearnCheck of(Learn learn, Member member, ContentProgress contentProgress){

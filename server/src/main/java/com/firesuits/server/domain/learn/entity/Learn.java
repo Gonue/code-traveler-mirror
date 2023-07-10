@@ -12,14 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Entity
 @Getter
 @Setter
+@Table(name = "learn")
+@Entity
 public class Learn extends AuditingFields {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "learn_id", updatable = false)
     private Long learnId;
+
+    @Column(name = "title", nullable = false)
     private String title;
+
     @Column(columnDefinition = "TEXT", length = 20000)
     private String content;
 
