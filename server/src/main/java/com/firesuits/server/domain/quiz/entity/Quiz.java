@@ -13,14 +13,24 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "quiz")
 @Entity
 public class Quiz extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "quiz_id", updatable = false)
     private Long quizId;
+
+    @Column(name = "detail")
     private String detail;
+
+    @Column(name = "example")
     private String example;
+
+    @Column(name = "commentary")
     private String commentary;
+
+    @Column(name = "correct")
     private boolean correct;
 
 

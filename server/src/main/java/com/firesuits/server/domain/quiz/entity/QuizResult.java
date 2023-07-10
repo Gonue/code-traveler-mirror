@@ -11,10 +11,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "quiz_result")
 @Entity
 public class QuizResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "quiz_result_id")
     private Long quizResultId;
 
     @ManyToOne
@@ -28,12 +30,25 @@ public class QuizResult {
     @ManyToOne
     @JoinColumn(name = "content_id")
     private Content content;
+
+    @Column(name = "answer")
     private Boolean answer;
+
+    @Column(name = "result")
     private Boolean result;
+
+    @Column(name = "total_count")
     private int totalCount;
+
+    @Column(name = "correct_count")
     private int correctCount;
+
+    @Column(name = "wrong_count")
     private int wrongCount;
+
+    @Column(name = "check_point")
     private Boolean checkPoint;
+
     public static QuizResult of(Quiz quiz, Member member, Content content, Boolean answer, Boolean result, int totalCount, int correctCount, int wrongCount, Boolean checkPoint){
         QuizResult quizResult = new QuizResult();
         quizResult.setContent(content);
@@ -49,4 +64,3 @@ public class QuizResult {
         return quizResult;
     }
 }
-
